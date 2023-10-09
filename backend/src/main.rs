@@ -10,5 +10,5 @@ async fn main() {
 
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
-    let data = sqlx::query!("");
+    let data = sqlx::query!("SELECT * FROM pg_catalog.pg_tables;").fetch_one(&pool);
 }

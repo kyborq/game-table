@@ -1,5 +1,16 @@
 version: "3.8"
 services:
+  nginx:
+    image: nginx:1.21
+    # build: ./nginx
+    container_name: server
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    networks:
+      - app
+
   database:
     image: postgres:13
     container_name: database
@@ -11,3 +22,6 @@ services:
       - "5432:5432"
     volumes:
       - ./database/data:/var/lib/postgresql/data
+networks:
+  app:
+    driver: bridge
