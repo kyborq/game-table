@@ -3,9 +3,8 @@ use sqlx::FromRow;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, FromRow)]
-pub struct Score {
+pub struct Game {
     pub id: Uuid,
-    pub total: i32,
-    pub board_id: Uuid,
-    pub player: String,
+    pub name: String,
+    pub token: String,
 }
