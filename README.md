@@ -1,4 +1,10 @@
-# game-table
+![image](https://github.com/kyborq/game-table/assets/52314985/76487375-1b46-4d26-b440-bd19fff282af)
+
+# GamePulse
+
+Store and retrieve information about your player state and score
+
+## Backend
 
 0. Install sqlx tools
 
