@@ -20,10 +20,14 @@ async fn main() {
 
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
-    let app = Router::new()
+    let api_routes = Router::new()
         .route("/games", post(api::game::create))
-        .route("/game/:name", get(api::game::info))
-        .with_state(pool);
+        .route("/games/:name", get(api::game::info))
+        .route("/boards", post(api::board::create))
+        .route("/boards/:game", get(api::board::list))
+        .route("/boards/:game/:name", get(api::board::show));
+
+    let app = Router::new().nest("/api", api_routes).with_state(pool);
 
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
         .serve(app.into_make_service())
