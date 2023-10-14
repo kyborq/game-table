@@ -1,8 +1,13 @@
 mod api;
 mod model;
 mod repository;
+mod response;
+mod utils;
 
-use axum::{routing::post, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use dotenvy::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
@@ -17,6 +22,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/games", post(api::game::create))
+        .route("/game/:name", get(api::game::info))
         .with_state(pool);
 
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())

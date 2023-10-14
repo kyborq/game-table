@@ -1,36 +1,38 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum::{
+    extract::{Path, State},
+    Json,
+};
 use serde::Deserialize;
 use sqlx::PgPool;
 
-use crate::repository::game::get_game;
+use crate::{
+    model::game::Game,
+    repository::game::{create_game, get_game},
+    response::CustomResponse,
+};
 
 #[derive(Debug, Deserialize)]
-pub struct NewGameForm {
-    pub name: String,
+pub struct NewGame {
+    name: String,
 }
 
 pub async fn create(
-    pool: State<PgPool>,
-    form: Json<NewGameForm>,
-) -> Result<impl IntoResponse, StatusCode> {
-    let game = get_game(&pool, &form.name).await;
-    // .unwrap_or(StatusCode::NOT_FOUND);
+    State(pool): State<PgPool>,
+    Json(new_game): Json<NewGame>,
+) -> CustomResponse<Game> {
+    let result = create_game(&pool, &new_game.name).await;
 
-    // match get_game(&pool, &form.name).await {
-    //     Ok(game) => Ok(game),
-    //     Err(_) => Err(Ok(StatusCode::NOT_ACCEPTABLE)),
-    // };
+    match result {
+        Ok(game) => CustomResponse::Success(game),
+        Err(_) => CustomResponse::Error("Something is wrong".to_string()),
+    }
+}
 
-    // match existed_game {
-    //     Ok(_) => (StatusCode::FORBIDDEN, Response::Error("Fuck!".to_string())),
-    //     Err(_) => match new_game(&pool, &form.name).await {
-    //         Ok(game) => (StatusCode::CREATED, Response::Body(game)),
-    //         Err(_) => (
-    //             StatusCode::SERVICE_UNAVAILABLE,
-    //             Response::Error("Fuck!".to_string()),
-    //         ),
-    //     },
-    // }
+pub async fn info(State(pool): State<PgPool>, Path(name): Path<String>) -> CustomResponse<Game> {
+    let result = get_game(&pool, &name).await;
 
-    Ok(StatusCode::NOT_FOUND)
+    match result {
+        Ok(game) => CustomResponse::Success(game),
+        Err(_) => CustomResponse::Error("Something is wrong".to_string()),
+    }
 }
