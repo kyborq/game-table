@@ -6,5 +6,4 @@ use uuid::Uuid;
 pub struct Game {
     pub id: Uuid,
     pub name: String,
-    pub token: String,
 }

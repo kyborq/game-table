@@ -23,9 +23,9 @@ async fn main() {
     let api_routes = Router::new()
         .route("/games", post(api::game::create))
         .route("/games/:name", get(api::game::info))
-        .route("/boards", post(api::board::create))
-        .route("/boards/:game", get(api::board::list))
-        .route("/boards/:game/:name", get(api::board::show));
+        .route("/score", post(api::score::create))
+        .route("/score/:game", get(api::score::list))
+        .route("/score/:game/:player", get(api::score::show));
 
     let app = Router::new().nest("/api", api_routes).with_state(pool);
 

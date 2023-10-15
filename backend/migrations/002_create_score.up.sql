@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS score (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
     total INTEGER NOT NULL,
-    board_id UUID REFERENCES board(id) ON DELETE CASCADE,
     player TEXT NOT NULL
 );

@@ -20,7 +20,7 @@ pub async fn create(
     State(pool): State<PgPool>,
     Json(new_game): Json<NewGame>,
 ) -> CustomResponse<Game> {
-    let result = create_game(&pool, &new_game.name).await;
+    let result: Result<Game, sqlx::Error> = create_game(&pool, &new_game.name).await;
 
     match result {
         Ok(game) => CustomResponse::Success(game),
