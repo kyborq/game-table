@@ -20,6 +20,9 @@ async fn main() {
     let pool = PgPoolOptions::new().connect(&database_url).await.unwrap();
 
     let api_routes = Router::new()
+        .route("/login", post(api::auth::login))
+        .route("/register", post(api::auth::register))
+        .route("/logout", post(api::auth::logout))
         .route("/games", post(api::game::create))
         .route("/games/:name", get(api::game::info))
         .route("/score", post(api::score::create))
