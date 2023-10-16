@@ -26,7 +26,10 @@ pub async fn login(
 
             // Save to cookie
 
-            CustomResponse::Success(user)
+            // CustomResponse::Success(user)
+
+            // TODO: Add token generation
+            CustomResponse::WithCookie(user, "asdf".to_string())
         }
         Err(_) => CustomResponse::Error("Login or password are incorrect".to_string()),
     }

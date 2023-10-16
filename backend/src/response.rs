@@ -1,5 +1,5 @@
 use axum::{
-    http::StatusCode,
+    http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode},
     response::{IntoResponse, Response},
     Json,
 };
@@ -11,6 +11,12 @@ struct BodyResponse<T> {
 }
 
 #[derive(Serialize)]
+struct CookieResponse<T> {
+    data: T,
+    cookie: String,
+}
+
+#[derive(Serialize)]
 struct ErrorResponse {
     error: String,
 }
@@ -18,6 +24,7 @@ struct ErrorResponse {
 pub enum CustomResponse<T> {
     Success(T),
     Error(String),
+    WithCookie(T, String),
 }
 
 impl<T: Serialize> IntoResponse for CustomResponse<T> {
@@ -30,6 +37,13 @@ impl<T: Serialize> IntoResponse for CustomResponse<T> {
             CustomResponse::Error(error) => {
                 let error_response = ErrorResponse { error };
                 (StatusCode::FORBIDDEN, Json(error_response)).into_response()
+            }
+            CustomResponse::WithCookie(data, cookie) => {
+                let body_response = BodyResponse { data };
+                let mut headers = HeaderMap::new();
+                headers.insert(SET_COOKIE, HeaderValue::from_str(&cookie).unwrap());
+
+                (StatusCode::OK, headers, Json(body_response)).into_response()
             }
         }
     }
