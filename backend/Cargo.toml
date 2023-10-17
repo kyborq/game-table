@@ -15,3 +15,4 @@ serde = { version = "1.0.188", features = ["derive"] }
 rand = "0.8.5"
 jsonwebtoken = "9.0.0"
 chrono = "0.4.31"
+cookie = "0.18.0"
