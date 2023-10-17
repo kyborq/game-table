@@ -1,4 +1,7 @@
+use std::env;
+
 use axum::{extract::State, Json};
+use chrono::{Duration, Utc};
 use serde::Deserialize;
 use sqlx::PgPool;
 
@@ -6,6 +9,7 @@ use crate::{
     model::user::UserPublic,
     repository::user::{get_user, login_user, register_user},
     response::CustomResponse,
+    service::token::generate_token,
 };
 
 #[derive(Debug, Deserialize)]
@@ -22,14 +26,17 @@ pub async fn login(
 
     match user {
         Ok(user) => {
-            // Generate new token
+            let secret = env::var("TOKEN_SECRET").unwrap();
+            let expiration_date = Utc::now() + Duration::days(7);
+            let token = generate_token(&user.id.to_string(), &secret, expiration_date);
 
-            // Save to cookie
+            let cookie_token = format!(
+                "token={}; HttpOnly; Expires={}",
+                token,
+                expiration_date.to_rfc2822()
+            );
 
-            // CustomResponse::Success(user)
-
-            // TODO: Add token generation
-            CustomResponse::WithCookie(user, "asdf".to_string())
+            CustomResponse::WithCookie(user, cookie_token.to_string())
         }
         Err(_) => CustomResponse::Error("Login or password are incorrect".to_string()),
     }

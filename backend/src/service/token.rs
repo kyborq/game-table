@@ -8,10 +8,10 @@ pub struct Claims {
     pub exp: usize,
 }
 
-pub fn generate_token(user: String, secret: String, expiration_date: DateTime<Utc>) -> String {
+pub fn generate_token(user: &String, secret: &String, expiration_date: DateTime<Utc>) -> String {
     let claims: Claims = Claims {
         exp: expiration_date.timestamp() as usize,
-        user,
+        user: user.to_string(),
     };
 
     let header: Header = Header::new(Algorithm::HS256);
